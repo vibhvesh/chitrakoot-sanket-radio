@@ -8,23 +8,30 @@ LOC={'hi':'&hl=hi&gl=IN&ceid=IN:hi','en':'&hl=en-IN&gl=IN&ceid=IN:en'}
 OK=['jagran','amar ujala','amarujala','hindustan','livehindustan','navbharat','times of india','hindustan times','indian express','ndtv','abp','aaj tak','aajtak','zee','news18','pti','ani','patrika','bhaskar','the hindu','dd news','prasar bharati','.gov.in','etv bharat','india tv','jansatta','lalluram','free press journal','naidunia','tv9','republic','economic times','up tak','mp tak','dainik']
 KEY=re.compile(r'chitrakoot|chitrakut|चित्रकूट|karwi|कर्वी|manikpur|मानिकपुर|mau\b|मऊ|rajapur|राजापुर|bargarh|बरगढ़|majhgawan|मझगवां|सतना|satna|kamadgiri|कामदगिरि|ramghat|रामघाट|pahari|पहाड़ी',re.I)
 def strip(t):return re.sub(r'\s+',' ',html.unescape(re.sub(r'<[^>]+>',' ',t or ''))).strip()
-out={}
-for lang,q in Q:
-  u=B+urllib.parse.quote(q)+LOC[lang]
-  try:x=ET.fromstring(urllib.request.urlopen(urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0'}),timeout=20).read())
-  except Exception as e:print(u,e);continue
-  for i in x.iter('item'):
-    s=i.find('source');src=(s.text if s is not None else '') or '';surl=s.get('url','') if s is not None else ''
-    if not any(k in (src+' '+surl).lower() for k in OK):continue
-    t=re.sub(r'\s+-\s+[^-]+$','',i.findtext('title') or '').strip()
-    if not KEY.search(t):continue
-    k=re.sub(r'\W+','',t.lower())[:60]
-    if not t or k in out:continue
-    try:d=parsedate_to_datetime(i.findtext('pubDate')).astimezone(timezone.utc)
-    except Exception:continue
-    if d<datetime.now(timezone.utc)-timedelta(days=7):continue
-    lg='hi' if re.search('[\u0900-\u097F]',t) else 'en'
-    out[k]=dict(title=t,source=src,link=i.findtext('link'),pubDate=d.isoformat(),lang=lg)
+NB={'Banda':('बांदा','Banda'),'Satna':('सतना','Satna'),'Prayagraj':('प्रयागराज','Prayagraj'),'Kaushambi':('कौशांबी','Kaushambi'),'Panna':('पन्ना','Panna'),'Rewa':('रीवा','Rewa'),'Mahoba':('महोबा','Mahoba'),'Fatehpur':('फतेहपुर','Fatehpur'),'Hamirpur':('हमीरपुर','Hamirpur')}
+SEEN=set()
+def fetch(Q,KEY,dist,out):
+ for lang,q in Q:
+   u=B+urllib.parse.quote(q)+LOC[lang]
+   try:x=ET.fromstring(urllib.request.urlopen(urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0'}),timeout=20).read())
+   except Exception as e:print(u,e);continue
+   for i in x.iter('item'):
+     s=i.find('source');src=(s.text if s is not None else '') or '';surl=s.get('url','') if s is not None else ''
+     if not any(k in (src+' '+surl).lower() for k in OK):continue
+     t=re.sub(r'\s+-\s+[^-]+$','',i.findtext('title') or '').strip()
+     if not KEY.search(t):continue
+     k=re.sub(r'\W+','',t.lower())[:60]
+     if not t or k in out or k in SEEN:continue
+     try:d=parsedate_to_datetime(i.findtext('pubDate')).astimezone(timezone.utc)
+     except Exception:continue
+     if d<datetime.now(timezone.utc)-timedelta(days=7):continue
+     lg='hi' if re.search('[\u0900-\u097F]',t) else 'en'
+     out[k]=dict(title=t,source=src,link=i.findtext('link'),pubDate=d.isoformat(),lang=lg,district=dist)
+out={};fetch(Q,KEY,'Chitrakoot',out);SEEN.update(out)
+near=[]
+for d,(h,e) in NB.items():
+  o={};fetch([('hi',h+' when:7d'),('en',e+' when:7d')],re.compile(h+'|'+e,re.I),d,o);SEEN.update(o)
+  near+=sorted(o.values(),key=lambda a:a['pubDate'],reverse=True)[:7];print(d,len(o))
 it=sorted(out.values(),key=lambda a:a['pubDate'],reverse=True)
 STOP=set('चित्रकूट chitrakoot के में की को से पर और ने का है एक हुए हुई गया गई लिए news in the of to and a for on with at by up mp news जिले जिला शुरू लाख करने बाद दिन साल रहे रही'.split())
 c=Counter();ex={}
@@ -39,6 +46,8 @@ for w,n in c.most_common(40):
   used.add(a['title']);tr.append(dict(topic=w,count=n,title=a['title'],source=a['source'],link=a['link'],pubDate=a['pubDate'],lang=a['lang']))
   if len(tr)>=8:break
 if it:
-  open('news.json','w').write(json.dumps(it[:80],ensure_ascii=False,indent=0))
+  open('news.json','w').write(json.dumps(it[:60],ensure_ascii=False,indent=0))
   open('trending.json','w').write(json.dumps(tr,ensure_ascii=False,indent=0))
+if near:open('nearby.json','w').write(json.dumps(near[:63],ensure_ascii=False,indent=0))
+if not os.path.exists('ads.json'):open('ads.json','w').write('[]')
 print(len(it),'items',len(tr),'trending')

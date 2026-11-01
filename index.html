@@ -90,7 +90,7 @@ let seen=new Set(JSON.parse(LS.csr_seen||'[]')),news=[],breakQ=[],first=true;
 let desk=[],played=new Set(JSON.parse(LS.csr_desk||'[]'));
 async function loadDesk(){try{const a=JSON.parse(await tget('feed.json?t='+Date.now()));desk=a.filter(x=>x&&x.title&&!played.has(x.title+'|'+x.time)).sort((a,b)=>new Date(b.time)-new Date(a.time))}catch(e){}}
 function deskItem(){const d=desk.shift();if(!d)return null;played.add(d.title+'|'+d.time);LS.csr_desk=JSON.stringify([...played].slice(-300));return{seg:'DESK',title:($('lang').value=='hi'?'हमारे डेस्क से: ':'From our desk: ')+d.title,src:d.source||'Desk',lang:$('lang').value,text:d.text||''}}
-async function refresh(){loadDesk();loadTrend();const l=$('lang').value;let got=[];
+async function refresh(){loadDesk();loadTrend();loadNear();const l=$('lang').value;let got=[];
  try{const nj=JSON.parse(await tget('news.json?t='+Date.now()));const hasL=nj.some(i=>i.lang==l);nj.forEach(i=>{if(hasL&&i.lang!=l)return;got.push({title:i.title,src:i.source,sum:i.summary&&i.summary.length>40?i.summary:'',date:new Date(i.pubDate).getTime(),lang:i.lang})})}catch(e){}
  const rs=got.length?[]:await Promise.allSettled(feeds(l).map(proxied));
  rs.forEach(r=>{if(r.status!='fulfilled')return;const x=new DOMParser().parseFromString(r.value,'text/xml');x.querySelectorAll('item').forEach(i=>{let t=i.querySelector('title')?.textContent||'',s=i.querySelector('source')?.textContent||'';t=t.replace(/ - [^-]+$/,'');let d=strip(i.querySelector('description')?.textContent).replace(t,'').replace(s,'').trim();got.push({title:t,src:s,sum:d.length>40?d:'',date:new Date(i.querySelector('pubDate')?.textContent||0).getTime(),lang:l})})});
@@ -122,10 +122,15 @@ async function play(it){const k=++tok;cur=it;$('seg').textContent=it.seg=='DESK'
  for(const s of sents(it.title+'. '+it.text)){if(k!=tok||!running)return false;add(s);await say(s,it.lang,k);for(let i=0;i<30&&k==tok&&running;i++)await sleep(100)}return k==tok}
 function interrupt(){tok++;speechSynthesis.cancel()}
 const ID={en:'You are listening to Chitrakoot Sanket Radio. Local news from Chitrakoot, all day.',hi:'आप सुन रहे हैं चित्रकूट संकेत रेडियो। चित्रकूट की हर ताज़ा खबर, सबसे पहले।'};
+const DH={Banda:'बांदा',Satna:'सतना',Prayagraj:'प्रयागराज',Kaushambi:'कौशांबी',Panna:'पन्ना',Rewa:'रीवा',Mahoba:'महोबा',Fatehpur:'फतेहपुर',Hamirpur:'हमीरपुर'};
+let near=[],ads=[],di=0;async function loadNear(){try{near=JSON.parse(await tget('nearby.json?t='+Date.now()))}catch(e){}try{ads=JSON.parse(await tget('ads.json?t='+Date.now()))}catch(e){}}
+function nearby(){const ds=[...new Set(near.map(i=>i.district))];if(!ds.length)return null;const d=ds[di++%ds.length],hi=$('lang').value=='hi';let its=near.filter(i=>i.district==d);const f=its.filter(i=>i.lang==$('lang').value);if(f.length)its=f;
+ return{seg:'AAS-PAAS',title:hi?'आस-पास: '+(DH[d]||d)+' से खबरें':'Aas-paas: news from '+d,src:'Google News',lang:$('lang').value,text:(hi?'अब चलते हैं आस-पास, '+(DH[d]||d)+' जिले की खबरें। ':'Now to the nearby district of '+d+'. ')+its.slice(0,5).map(g=>g.title+(/[.!?।]$/.test(g.title)?' ':'. ')+(hi?'स्रोत: ':'Source: ')+g.source+'. ').join('')}}
+function vigyapan(){if(!ads.length)return null;const hi=$('lang').value=='hi';return{seg:'VIGYAPAN',title:hi?'विज्ञापन':'Classifieds',src:'Public listings',lang:$('lang').value,text:ads.slice(0,5).map(a=>[a.title,a.price,a.locality].filter(Boolean).join(', ')+'. Source: '+a.source+'. ').join('')+(hi?'कृपया सौदे से पहले जाँच लें।':'Please verify before dealing.')}}
 let trend=[];async function loadTrend(){try{trend=JSON.parse(await tget('trending.json?t='+Date.now()))}catch(e){}}
 function trending(){if(!trend.length)return null;const hi=$('lang').value=='hi';return{seg:'TRENDING',title:hi?'इस हफ्ते चित्रकूट में चर्चा में':'Trending in Chitrakoot this week',src:'Weekly trending',lang:$('lang').value,text:(hi?'इस हफ्ते की सबसे चर्चित खबरें। ':'The most covered stories this week. ')+trend.slice(0,5).map(t=>t.title+(/[.!?।]$/.test(t.title)?' ':'। ')).join('')}}
 async function loop(){let step=0;while(running){if(breakQ.length){const g=breakQ.shift(),hi=$('lang').value=='hi';await play({seg:'BREAKING',title:hi?'ब्रेकिंग न्यूज़':'Breaking news',src:g.src,lang:g.lang,text:(hi?'हम यह खबर बीच में रोककर दे रहे हैं। ':'We interrupt this programme with breaking news. ')+g.title+'. '+(g.sum||'')+(hi?' अब हम कार्यक्रम पर लौटते हैं।':' We now return to our programme.')});continue}
- const p=step%4;let it;if(p==0)it={seg:'NEWS',title:$('lang').value=='hi'?'स्टेशन पहचान':'Station ID',src:'',lang:$('lang').value,text:ID[$('lang').value]};else if(p==1)it=bulletin();else if(p==2)it=trending();else it=deskItem();
+ const p=step%6;let it;if(p==0)it={seg:'NEWS',title:$('lang').value=='hi'?'स्टेशन पहचान':'Station ID',src:'',lang:$('lang').value,text:ID[$('lang').value]};else if(p==1)it=bulletin();else if(p==2)it=nearby();else if(p==3)it=trending();else if(p==4)it=vigyapan();else it=deskItem();
  if(!it){step++;if(!news.length&&!desk.length)await sleep(3000);continue}
  const ok=await play(it);if(ok||!running||p==0)step++}}
 $('start').onclick=async()=>{if(running){running=false;interrupt();$('start').textContent='▶ START RADIO';$('rxl').classList.remove('on');return}
@@ -136,4 +141,4 @@ $('ov').onclick=()=>{$('ov').remove();if(!running)$('start').click()};
 $('skip').onclick=()=>{tok++;speechSynthesis.cancel()};
 $('lang').addEventListener('change',()=>{first=true;refresh()});
 setInterval(()=>{if(running)refresh()},180e3);loadTrend();refresh();setInterval(loadTrend,600e3);
-</script></body></html>
+</script><p style='text-align:center;font-size:11px;color:#9ab'>📢 Post your ad / अपना विज्ञापन दें — Google Form coming soon (जल्द आ रहा है)</p></body></html>
