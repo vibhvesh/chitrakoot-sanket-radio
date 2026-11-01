@@ -1,0 +1,139 @@
+<!doctype html><html lang=hi><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Chitrakoot Sanket Radio · चित्रकूट संकेत रेडियो</title><link rel=preconnect href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Share+Tech+Mono&display=swap" rel=stylesheet><style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:'Share Tech Mono',ui-monospace,monospace;color:#eee;-webkit-user-select:none;user-select:none;
+ background:radial-gradient(circle at 15% 10%,#ff3d7f 0,transparent 40%),radial-gradient(circle at 90% 20%,#ffb800 0,transparent 35%),radial-gradient(circle at 50% 100%,#00c2ff 0,transparent 45%),linear-gradient(135deg,#2b0a5e,#0b1e4a 60%,#062a2a);background-attachment:fixed;padding:14px}
+.rig{max-width:520px;margin:0 auto;background:linear-gradient(180deg,#3a3f47,#1d2026);border-radius:22px;padding:16px;box-shadow:0 20px 50px #0009,inset 0 2px 0 #fff3,inset 0 -3px 0 #0006;border:2px solid #555b66;position:relative}
+.rig:before,.rig:after{content:'';position:absolute;top:10px;width:10px;height:10px;border-radius:50%;background:radial-gradient(#999,#333)}.rig:before{left:10px}.rig:after{right:10px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.brand h1{font-family:Orbitron,sans-serif;font-size:clamp(15px,4.6vw,22px);margin:0;letter-spacing:2px;background:linear-gradient(90deg,#ffd23f,#ff7a18,#ff3d7f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{display:block;color:#9aa;font-size:11px;letter-spacing:3px}
+.leds{display:flex;gap:10px;font-size:11px}.led{display:flex;flex-direction:column;align-items:center;gap:3px;color:#aaa}
+.led i{width:14px;height:14px;border-radius:50%;background:#333;box-shadow:inset 0 1px 3px #000}
+.led.tx.on i{background:#ff2d2d;box-shadow:0 0 12px #ff2d2d,0 0 4px #fff inset}.led.rx.on i{background:#39ff88;box-shadow:0 0 12px #39ff88,0 0 4px #fff inset}.led.pw i{background:#ffb800;box-shadow:0 0 10px #ffb800}
+.lcd{background:linear-gradient(180deg,#0f2a1a,#08180f);border-radius:10px;padding:10px 14px;border:3px solid #111;box-shadow:inset 0 0 20px #000,0 0 18px #39ff8833;color:#39ff88;text-shadow:0 0 8px #39ff88}
+.lcd .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;opacity:.85}
+.freq{font-family:Orbitron,sans-serif;font-weight:800;font-size:clamp(26px,9vw,44px);letter-spacing:3px;text-align:center;margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#st{text-align:center;font-size:15px;min-height:20px}
+.meter{margin-top:8px}.meter .lab{display:flex;justify-content:space-between;font-size:10px;opacity:.8}
+.bars{display:flex;gap:3px;height:16px;margin-top:2px}.bars b{flex:1;background:#123;border-radius:2px;transition:background .05s}
+.bars b.l{background:#39ff88;box-shadow:0 0 6px #39ff88}.bars b.l.y{background:#ffd23f;box-shadow:0 0 6px #ffd23f}.bars b.l.r{background:#ff2d2d;box-shadow:0 0 6px #ff2d2d}
+.panel{margin-top:14px;background:#0005;border-radius:12px;padding:10px;border:1px solid #fff1}
+.panel h3{margin:0 0 8px;font-family:Orbitron,sans-serif;font-size:12px;letter-spacing:2px;color:#ffd23f;display:flex;justify-content:space-between;align-items:center}
+#count{color:#39ff88;text-shadow:0 0 8px #39ff88}
+#us{display:flex;flex-wrap:wrap;gap:6px;padding:0;margin:0}
+#us li{list-style:none;font-family:Orbitron,sans-serif;font-size:12px;padding:5px 10px;border-radius:999px;background:linear-gradient(135deg,#00c2ff,#7a5cff);color:#fff;box-shadow:0 2px 6px #0007;text-transform:uppercase;letter-spacing:1px}
+#us li.me{background:linear-gradient(135deg,#ffb800,#ff7a18)}#us li.tk{background:linear-gradient(135deg,#ff2d2d,#ff3d7f);box-shadow:0 0 14px #ff2d2d;animation:pulse 1s infinite}
+#us li.none{background:#333}
+@keyframes pulse{50%{transform:scale(1.06)}}
+input{font:inherit;font-size:17px;width:100%;padding:12px;margin:5px 0;border-radius:10px;border:2px solid #444;background:#0b0f14;color:#39ff88}
+button{font-family:Orbitron,sans-serif;cursor:pointer;border:0;border-radius:10px;color:#fff}
+#go{width:100%;font-size:18px;padding:14px;margin-top:6px;background:linear-gradient(135deg,#39d98a,#00a86b);box-shadow:0 4px 0 #006b44,0 8px 20px #0008}
+#go:active{transform:translateY(3px);box-shadow:0 1px 0 #006b44}
+#ptt{width:min(62vw,230px);height:min(62vw,230px);border-radius:50%;margin:18px auto 6px;display:block;touch-action:none;-webkit-touch-callout:none;font-size:20px;letter-spacing:2px;
+ background:radial-gradient(circle at 35% 30%,#7dffb5,#16c060 45%,#076b33);border:6px solid #222;box-shadow:0 0 0 4px #555,0 0 30px #39ff88aa,inset 0 -8px 16px #0006;text-shadow:0 1px 3px #0008;transition:transform .08s}
+#ptt.on{background:radial-gradient(circle at 35% 30%,#ff9a9a,#ff2020 45%,#8a0000);box-shadow:0 0 0 4px #555,0 0 50px #ff2020,inset 0 -8px 16px #0006;transform:scale(.96)}
+#ptt.busy{background:radial-gradient(circle at 35% 30%,#ffe39a,#ffae00 45%,#8a5a00);box-shadow:0 0 0 4px #555,0 0 40px #ffae00,inset 0 -8px 16px #0006}
+#ptt.wait{filter:brightness(1.2)}
+.hint{text-align:center;color:#889;font-size:11px}
+#unlock{display:none;width:100%;padding:12px;margin-top:8px;background:linear-gradient(135deg,#ffb800,#ff7a18);color:#111}
+#main{display:none}
+#log{list-style:none;padding:0;margin:0;max-height:300px;overflow:auto}
+#log li{display:flex;align-items:center;gap:8px;padding:6px;border-bottom:1px dashed #fff2;font-size:13px}
+#log li .cs{font-family:Orbitron,sans-serif;color:#00c2ff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#log li.mine .cs{color:#ffb800}#log li .tm{color:#aaa}#log li .du{color:#39ff88;min-width:44px;text-align:right}
+#log button{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#39d98a,#00a86b);font-size:15px}
+#log button.playing{background:linear-gradient(135deg,#ff2d2d,#ff3d7f)}
+#clr{font-size:10px;padding:6px 10px;background:#a33}
+#net{margin-top:10px;font-size:10px;color:#9ab;text-align:center;word-break:break-all}
+#map{height:230px;border-radius:12px;border:2px solid #00c2ff55;margin-top:8px;z-index:0}
+#locnote{font-size:11px;color:#ffb800;background:#ffb80018;border:1px dashed #ffb80088;border-radius:8px;padding:6px;margin:4px 0}
+#lt{font-size:11px;display:flex;gap:4px;align-items:center;color:#39ff88}#lt input{width:auto;margin:0}
+.pin{font-size:10px;color:#9ef;margin-left:6px;opacity:.9}.lg{font-size:10px;color:#9ef;display:block}
+.mk{width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px #000}.mk.tk{background:#ff2d2d!important;animation:pz 1s infinite}
+@keyframes pz{0%{box-shadow:0 0 0 0 #ff2d2dcc}100%{box-shadow:0 0 0 14px #ff2d2d00}}
+#sstvList{list-style:none;padding:0;margin:0}#sstvList li{padding:6px 0;border-top:1px solid #fff2}#sstvList canvas,#sstvList img{width:100%;max-width:320px;display:block;border-radius:6px;background:#000;image-rendering:auto}
+#sstvList .sm{font-size:11px;opacity:.8;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}#sstvP button{font-family:inherit;background:#2a2f38;color:#eee;border:1px solid #fff3;border-radius:8px;padding:8px;cursor:pointer}
+</style>
+<style>
+#story{white-space:pre-wrap;font-family:system-ui,sans-serif;font-size:16px;line-height:1.5;max-height:42vh;overflow:auto;color:#eee;user-select:text;-webkit-user-select:text}
+#story div{margin:0 0 6px;animation:fi .4s}@keyframes fi{from{opacity:0}}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ctl select,.ctl input,.ctl button{padding:8px;border-radius:8px;border:1px solid #555;background:#111;color:#eee;font-family:inherit}
+.ctl input{flex:1;min-width:140px}#note{font-size:11px;color:#ffd23f;min-height:14px;margin-top:4px}
+#seg{font-family:Orbitron;padding:2px 8px;border-radius:6px;background:#39ff88;color:#000}#seg.BREAKING{background:#ff2d2d;color:#fff;animation:pulse 1s infinite}#seg.STORY{background:#00c2ff}#seg.TRENDING{background:#ffb800}#seg.DESK{background:#c58cff}
+#ov{position:fixed;inset:auto 0 0 0;z-index:9;display:flex;justify-content:center;padding:18px;background:linear-gradient(transparent,#000c 40%)}#ov button{font-size:22px;padding:22px 30px;border-radius:999px;background:linear-gradient(135deg,#ff3d7f,#ff7a18);box-shadow:0 0 30px #ff3d7f;animation:pulse 1.2s infinite;width:min(92vw,460px)}
+.tick{overflow:hidden;white-space:nowrap;margin-top:8px;background:#000;border:1px solid #333;border-radius:6px;padding:5px 0;color:#ffd23f;font-size:13px}.tick span{display:inline-block;padding-left:100%;animation:tk 120s linear infinite}@keyframes tk{to{transform:translateX(-100%)}}
+</style></head><body><div id=ov><button>▶ सुनने के लिए टैप करें · Tap to listen</button></div><div class=rig>
+<div class=brand><div><h1>CHITRAKOOT SANKET RADIO</h1><small>चित्रकूट संकेत रेडियो · LOCAL NEWS</small></div><div class=leds><div class="led pw"><i></i>PWR</div><div class="led rx" id=rxl><i></i>AIR</div><div class="led tx" id=txl><i></i>BRK</div></div></div>
+<div class=lcd><div class=row><span id=seg>NEWS</span><span id=lang2></span></div><div class=freq id=title>NEWS RADIO</div><div id=st>टैप करें · Tap to listen</div></div>
+<div class=tick><span id=tick>Loading headlines…</span></div>
+<div class=panel><h3>NOW PLAYING <span id=src></span></h3><div id=story>चित्रकूट की ताज़ा खबरें लोड हो रही हैं…</div></div>
+<button id=start style="width:100%;margin-top:10px;padding:12px;font-family:Orbitron">▶ START RADIO</button>
+<div class=ctl><button id=skip>⏭ SKIP</button></div><div id=note></div>
+<div class=panel><h3>SETTINGS</h3><div class=ctl>
+<select id=lang><option value=hi>हिन्दी Hindi</option><option value=en>English</option></select>
+<select id=engine><option value=none>Narrate raw (no AI)</option><option value=grok>Grok (xAI) rewrite</option><option value=openai>ChatGPT rewrite</option></select></div>
+<div class=ctl><input id=kx type=password placeholder="xAI API key (stored only in this browser)"><input id=ko type=password placeholder="OpenAI API key (stored only in this browser)"></div></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),LS=localStorage,sleep=ms=>new Promise(r=>setTimeout(r,ms));
+['lang','engine','kx','ko'].forEach(k=>{if(LS['csr_'+k])$(k).value=LS['csr_'+k];$(k).onchange=()=>{LS['csr_'+k]=$(k).value;upd()}});
+function upd(){$('lang2').textContent=$('lang').value.toUpperCase()}upd();
+const note=t=>$('note').textContent=t;
+const PROX=[u=>'https://corsproxy.io/?url='+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)];
+let pi=0;
+async function tget(u,ms=12000){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw Error(r.status);return await r.text()}finally{clearTimeout(t)}}
+async function proxied(u){for(let i=0;i<PROX.length;i++){const k=(pi+i)%PROX.length;try{const t=await tget(PROX[k](u));if(t.includes('<item>')){pi=k;return t}}catch(e){}}throw Error('all proxies failed')}
+const strip=h=>{const d=document.createElement('div');d.innerHTML=h||'';return d.textContent.replace(/\s+/g,' ').trim()};
+function feeds(l){const q=l=='hi'?'hl=hi&gl=IN&ceid=IN:hi':'hl=en-IN&gl=IN&ceid=IN:en',b='https://news.google.com/rss';return[b+'/search?q='+encodeURIComponent((l=='hi'?'चित्रकूट':'Chitrakoot')+' when:7d')+'&'+q]}
+let seen=new Set(JSON.parse(LS.csr_seen||'[]')),news=[],breakQ=[],first=true;
+let desk=[],played=new Set(JSON.parse(LS.csr_desk||'[]'));
+async function loadDesk(){try{const a=JSON.parse(await tget('feed.json?t='+Date.now()));desk=a.filter(x=>x&&x.title&&!played.has(x.title+'|'+x.time)).sort((a,b)=>new Date(b.time)-new Date(a.time))}catch(e){}}
+function deskItem(){const d=desk.shift();if(!d)return null;played.add(d.title+'|'+d.time);LS.csr_desk=JSON.stringify([...played].slice(-300));return{seg:'DESK',title:($('lang').value=='hi'?'हमारे डेस्क से: ':'From our desk: ')+d.title,src:d.source||'Desk',lang:$('lang').value,text:d.text||''}}
+async function refresh(){loadDesk();loadTrend();const l=$('lang').value;let got=[];
+ try{const nj=JSON.parse(await tget('news.json?t='+Date.now()));const hasL=nj.some(i=>i.lang==l);nj.forEach(i=>{if(hasL&&i.lang!=l)return;got.push({title:i.title,src:i.source,sum:i.summary&&i.summary.length>40?i.summary:'',date:new Date(i.pubDate).getTime(),lang:i.lang})})}catch(e){}
+ const rs=got.length?[]:await Promise.allSettled(feeds(l).map(proxied));
+ rs.forEach(r=>{if(r.status!='fulfilled')return;const x=new DOMParser().parseFromString(r.value,'text/xml');x.querySelectorAll('item').forEach(i=>{let t=i.querySelector('title')?.textContent||'',s=i.querySelector('source')?.textContent||'';t=t.replace(/ - [^-]+$/,'');let d=strip(i.querySelector('description')?.textContent).replace(t,'').replace(s,'').trim();got.push({title:t,src:s,sum:d.length>40?d:'',date:new Date(i.querySelector('pubDate')?.textContent||0).getTime(),lang:l})})});
+ if(!got.length){got=JSON.parse(LS.csr_cache||'[]');note('Offline: replaying cached headlines')}else{note('Headlines updated '+new Date().toLocaleTimeString()+' via '+'Google News');LS.csr_cache=JSON.stringify(got.slice(0,60))}
+ const u=new Map();got.forEach(g=>{if(!u.has(g.title))u.set(g.title,g)});got=[...u.values()].sort((a,b)=>b.date-a.date);news=got;
+ if(!running)$('story').innerHTML=got.slice(0,8).map(g=>'<div>• '+g.title.replace(/</g,'&lt;')+' <small style=opacity:.6>('+g.src+')</small></div>').join('');$('tick').textContent=got.slice(0,25).map(g=>'◆ '+g.title+(g.src?' ('+g.src+')':'')).join('   ');
+ if(!first)got.forEach(g=>{if(!seen.has(g.title)&&(/breaking|just in|\blive\b|ब्रेकिंग|लाइव/i.test(g.title)||Date.now()-g.date<20*60e3))breakQ.push(g)});
+ got.forEach(g=>seen.add(g.title));LS.csr_seen=JSON.stringify([...seen].slice(-500));first=false;
+ if(breakQ.length&&cur&&cur.seg!='BREAKING')interrupt()}
+async function story(){const l=$('lang').value,wl=l=='hi'?'hi':'en',n=new Date(),mm=String(n.getMonth()+1).padStart(2,'0'),dd=String(n.getDate()).padStart(2,'0');let s;
+ try{if(Math.random()<.6){const j=JSON.parse(await tget(`https://${wl}.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`));const e=j.events[Math.floor(Math.random()*j.events.length)];const p=e.pages?.[0];
+   s={title:(l=='hi'?'आज के दिन, ':'On this day in ')+e.year,text:e.text+' '+(p?.extract||'')}}
+  else{const j=JSON.parse(await tget('https://'+wl+'.wikipedia.org/api/rest_v1/page/random/summary'));if(j.extract.length<200&&wl=='en'){const f=JSON.parse(await tget(`https://en.wikipedia.org/api/rest_v1/feed/featured/${n.getFullYear()}/${mm}/${dd}`));s={title:'Featured story: '+f.tfa.titles.normalized,text:f.tfa.extract}}else s={title:(l=='hi'?'कहानी: ':'Story: ')+j.title,text:j.extract}}
+  s.text=await rewrite(s.title,s.text,l);const c=JSON.parse(LS.csr_stories||'[]');c.unshift(s);LS.csr_stories=JSON.stringify(c.slice(0,20))}
+ catch(e){const c=JSON.parse(LS.csr_stories||'[]');s=c[Math.floor(Math.random()*c.length)]||{title:'Station note',text:'We are having trouble reaching our sources. Stay tuned, more news is coming up shortly.'}}
+ return {seg:'STORY',title:s.title,src:'Wikipedia',text:s.text,lang:l}}
+async function rewrite(title,text,l){const e=$('engine').value;const p='Rewrite as a 1-2 minute radio narration (180-260 words), engaging, factual, no markdown. Language: '+(l=='hi'?'Hindi (Devanagari)':'English')+'. Topic: '+title+'. Facts: '+text.slice(0,2500);
+ try{let url,key,model;if(e=='grok'&&$('kx').value){url='https://api.x.ai/v1/chat/completions';key=$('kx').value.trim();model='grok-3-mini'}else if(e=='openai'&&$('ko').value){url='https://api.openai.com/v1/chat/completions';key=$('ko').value.trim();model='gpt-4o-mini'}else return text;
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:p}]})});if(!r.ok)throw 0;return (await r.json()).choices[0].message.content.replace(/[*#]/g,'')}catch(x){return text}}
+function bulletin(){const l=$('lang').value,its=news.slice(0,6);if(!its.length)return null;news=news.slice(6).concat(its);
+ const hi=l=='hi';return{seg:'NEWS',title:hi?'समाचार बुलेटिन':'News bulletin',src:'Google News',lang:l,text:(hi?'अब सुनिए ताज़ा समाचार। ':'Here are the latest headlines. ')+its.map(g=>g.title+(/[.!?।]$/.test(g.title)?' ':'. ')+(g.sum?g.sum+' ':'')+(g.src?(hi?'स्रोत: ':'Reported by ')+g.src+'. ':'')).join('')}}
+function voiceFor(l){const v=speechSynthesis.getVoices();return v.find(x=>x.lang.startsWith(l=='hi'?'hi':'en-IN'))||v.find(x=>x.lang.startsWith(l))}
+const sents=t=>(t.match(/[^.!?।]+[.!?।]+["')\]]*|[^.!?।]+$/g)||[t]).map(s=>s.trim()).filter(s=>s.length>1);
+let running=false,cur=null,tok=0,ctx;
+function tone(br){try{ctx=ctx||new AudioContext();(br?[880,660,880,660]:[523,659,784]).forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f;o.connect(g);g.connect(ctx.destination);const t=ctx.currentTime+i*.22;g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.21)})}catch(e){}}
+function say(s,l,k){return new Promise(res=>{if(k!=tok)return res();const u=new SpeechSynthesisUtterance(s);u.lang=l=='hi'?'hi-IN':'en-IN';const v=voiceFor(l);if(v)u.voice=v;u.rate=.95;let d=0;const f=()=>{if(!d){d=1;clearTimeout(w);res()}};u.onend=f;u.onerror=f;const w=setTimeout(f,4000+s.length*120);speechSynthesis.speak(u)})}
+async function play(it){const k=++tok;cur=it;$('seg').textContent=it.seg=='DESK'?'FROM OUR DESK':it.seg;$('seg').className=it.seg;$('title').textContent=it.title.toUpperCase();$('src').textContent=it.src||'';$('txl').classList.toggle('on',it.seg=='BREAKING');$('st').textContent='📻 on air';
+ tone(it.seg=='BREAKING');await sleep(900);$('story').innerHTML='';const add=t=>{const d=document.createElement('div');d.textContent=t;$('story').appendChild(d);$('story').scrollTop=1e9};
+ for(const s of sents(it.title+'. '+it.text)){if(k!=tok||!running)return false;add(s);await say(s,it.lang,k);for(let i=0;i<30&&k==tok&&running;i++)await sleep(100)}return k==tok}
+function interrupt(){tok++;speechSynthesis.cancel()}
+const ID={en:'You are listening to Chitrakoot Sanket Radio. Local news from Chitrakoot, all day.',hi:'आप सुन रहे हैं चित्रकूट संकेत रेडियो। चित्रकूट की हर ताज़ा खबर, सबसे पहले।'};
+let trend=[];async function loadTrend(){try{trend=JSON.parse(await tget('trending.json?t='+Date.now()))}catch(e){}}
+function trending(){if(!trend.length)return null;const hi=$('lang').value=='hi';return{seg:'TRENDING',title:hi?'इस हफ्ते चित्रकूट में चर्चा में':'Trending in Chitrakoot this week',src:'Weekly trending',lang:$('lang').value,text:(hi?'इस हफ्ते की सबसे चर्चित खबरें। ':'The most covered stories this week. ')+trend.slice(0,5).map(t=>t.title+(/[.!?।]$/.test(t.title)?' ':'। ')).join('')}}
+async function loop(){let step=0;while(running){if(breakQ.length){const g=breakQ.shift(),hi=$('lang').value=='hi';await play({seg:'BREAKING',title:hi?'ब्रेकिंग न्यूज़':'Breaking news',src:g.src,lang:g.lang,text:(hi?'हम यह खबर बीच में रोककर दे रहे हैं। ':'We interrupt this programme with breaking news. ')+g.title+'. '+(g.sum||'')+(hi?' अब हम कार्यक्रम पर लौटते हैं।':' We now return to our programme.')});continue}
+ const p=step%4;let it;if(p==0)it={seg:'NEWS',title:'Station ID',src:'',lang:$('lang').value,text:ID[$('lang').value]};else if(p==1)it=bulletin();else if(p==2)it=trending();else it=deskItem();
+ if(!it){step++;if(!news.length&&!desk.length)await sleep(3000);continue}
+ const ok=await play(it);if(ok||!running||p==0)step++}}
+$('start').onclick=async()=>{if(running){running=false;interrupt();$('start').textContent='▶ START RADIO';$('rxl').classList.remove('on');return}
+ running=true;$('start').textContent='■ STOP';$('rxl').classList.add('on');speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+ try{await navigator.wakeLock?.request('screen')}catch(e){}document.addEventListener('visibilitychange',()=>{if(running&&document.visibilityState=='visible')navigator.wakeLock?.request('screen').catch(()=>{})});
+ $('st').textContent='Tuning in…';await refresh();loop()};
+$('ov').onclick=()=>{$('ov').remove();if(!running)$('start').click()};
+$('skip').onclick=()=>{tok++;speechSynthesis.cancel()};
+$('lang').addEventListener('change',()=>{first=true;refresh()});
+setInterval(()=>{if(running)refresh()},180e3);loadTrend();refresh();setInterval(loadTrend,600e3);
+</script></body></html>

@@ -1,0 +1,16 @@
+name: news
+on:
+  schedule: [{cron: '*/15 * * * *'}]
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  f:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/fetch_news.py
+      - run: |
+          git add news.json trending.json
+          git diff --cached --quiet && exit 0
+          git -c user.name=github-actions -c user.email=actions@github.com commit -m "Update Chitrakoot news"
+          git push
