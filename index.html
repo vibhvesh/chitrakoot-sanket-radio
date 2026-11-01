@@ -125,7 +125,7 @@ const ID={en:'You are listening to Chitrakoot Sanket Radio. Local news from Chit
 let trend=[];async function loadTrend(){try{trend=JSON.parse(await tget('trending.json?t='+Date.now()))}catch(e){}}
 function trending(){if(!trend.length)return null;const hi=$('lang').value=='hi';return{seg:'TRENDING',title:hi?'इस हफ्ते चित्रकूट में चर्चा में':'Trending in Chitrakoot this week',src:'Weekly trending',lang:$('lang').value,text:(hi?'इस हफ्ते की सबसे चर्चित खबरें। ':'The most covered stories this week. ')+trend.slice(0,5).map(t=>t.title+(/[.!?।]$/.test(t.title)?' ':'। ')).join('')}}
 async function loop(){let step=0;while(running){if(breakQ.length){const g=breakQ.shift(),hi=$('lang').value=='hi';await play({seg:'BREAKING',title:hi?'ब्रेकिंग न्यूज़':'Breaking news',src:g.src,lang:g.lang,text:(hi?'हम यह खबर बीच में रोककर दे रहे हैं। ':'We interrupt this programme with breaking news. ')+g.title+'. '+(g.sum||'')+(hi?' अब हम कार्यक्रम पर लौटते हैं।':' We now return to our programme.')});continue}
- const p=step%4;let it;if(p==0)it={seg:'NEWS',title:'Station ID',src:'',lang:$('lang').value,text:ID[$('lang').value]};else if(p==1)it=bulletin();else if(p==2)it=trending();else it=deskItem();
+ const p=step%4;let it;if(p==0)it={seg:'NEWS',title:$('lang').value=='hi'?'स्टेशन पहचान':'Station ID',src:'',lang:$('lang').value,text:ID[$('lang').value]};else if(p==1)it=bulletin();else if(p==2)it=trending();else it=deskItem();
  if(!it){step++;if(!news.length&&!desk.length)await sleep(3000);continue}
  const ok=await play(it);if(ok||!running||p==0)step++}}
 $('start').onclick=async()=>{if(running){running=false;interrupt();$('start').textContent='▶ START RADIO';$('rxl').classList.remove('on');return}
